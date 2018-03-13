@@ -46,6 +46,7 @@
 #'
 #' @docType package
 #' @import accelerometry
+#' @importFrom dvmisc inside
 #' @import svMisc
 #' @import survey
 #' @name nhanesaccel
