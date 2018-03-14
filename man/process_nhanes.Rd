@@ -195,7 +195,7 @@ Data frame or list of two data frames, depending on \code{return_form}.
 Calculates a variety of physical activity variables from the time-series
 accelerometer data in NHANES 2003-2006. A data dictionary for the variables
 created is available here:
-\url{https://sites.google.com/site/danevandomelen/r-package-nhanesaccel/data-dictionary}.
+\url{https://vandomed.github.io/process_nhanes_dictionary}.
 }
 \examples{
 # Process NHANES 2003-2006 data using default settings
