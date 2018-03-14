@@ -6,7 +6,7 @@
 \usage{
 process_nhanes(waves = 3, directory = getwd(), nci_methods = FALSE,
   brevity = 1, hourly_var = "cpm", hourly_wearmin = 0,
-  hourly_normalize = TRUE, valid_days = 1, valid_week_days = 0,
+  hourly_normalize = FALSE, valid_days = 1, valid_week_days = 0,
   valid_weekend_days = 0, int_cuts = c(100, 760, 2020, 5999),
   youth_mod_cuts = rep(int_cuts[3], 12), youth_vig_cuts = rep(int_cuts[4],
   12), cpm_nci = FALSE, days_distinct = FALSE, nonwear_window = 60,

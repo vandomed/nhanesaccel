@@ -237,7 +237,7 @@ process_nhanes <- function(waves = 3,
                            brevity = 1,
                            hourly_var = "cpm",
                            hourly_wearmin = 0,
-                           hourly_normalize = TRUE,
+                           hourly_normalize = FALSE,
                            valid_days = 1,
                            valid_week_days = 0,
                            valid_weekend_days = 0,
@@ -595,8 +595,9 @@ process_nhanes <- function(waves = 3,
     day.vars1 <- day.vars1[1: k, ]
 
     # Calculate per-person averages
-    person.aves1 <- personvars(dayvars = day.vars1, rows = k, days = valid_days,
-                               wk = valid_week_days, we = valid_weekend_days)
+    person.aves1 <- personvars(dayvars = day.vars1, rows = ii,
+                               days = valid_days, wk = valid_week_days,
+                               we = valid_weekend_days)
 
     # Calculate adjusted 2-year MEC weight
     person.aves1 <- reweight_nhanes(accel_data = person.aves1, wave = 1,
@@ -917,8 +918,9 @@ process_nhanes <- function(waves = 3,
     day.vars2 <- day.vars2[1: k, ]
 
     # Calculate per-person averages
-    person.aves2 <- personvars(dayvars = day.vars2, rows = k, days = valid_days,
-                               wk = valid_week_days, we = valid_weekend_days)
+    person.aves2 <- personvars(dayvars = day.vars2, rows = ii,
+                               days = valid_days, wk = valid_week_days,
+                               we = valid_weekend_days)
 
     # Calculate adjusted 2-year MEC weight
     person.aves2 <- reweight_nhanes(accel_data = person.aves2, wave = 1,
@@ -930,7 +932,8 @@ process_nhanes <- function(waves = 3,
                           person.aves2[, 2: 201], person.aves2[, 201] / 2)
 
     # Clear variables
-    rm(w1, wave1_paxstat, wave1_paxcal, wave1_paxday, wave1_paxinten, wave1_ages)
+    rm(w2, wave2_paxstat, wave2_paxcal, wave2_paxday, wave2_paxinten,
+       wave2_ages)
 
   }
 
