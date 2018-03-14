@@ -1,3 +1,4 @@
 inst/doc
 .Rproj.user
 nhanesaccel.Rproj
+process_nhanes_dictionary.csv

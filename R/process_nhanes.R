@@ -3,7 +3,7 @@
 #' Calculates a variety of physical activity variables from the time-series
 #' accelerometer data in NHANES 2003-2006. A data dictionary for the variables
 #' created is available here:
-#' \url{https://sites.google.com/site/danevandomelen/r-package-nhanesaccel/data-dictionary}.
+#' \url{https://vandomed.github.io/process_nhanes_dictionary}.
 #'
 #' @param waves Integer value for which wave of data to process. Choices are 1
 #' for NHANES 2003-2004, 2 for NHANES 2005-2006 data, and 3 for both.
