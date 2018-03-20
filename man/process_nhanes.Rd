@@ -2,12 +2,12 @@
 % Please edit documentation in R/process_nhanes.R
 \name{process_nhanes}
 \alias{process_nhanes}
-\title{Process NHANES 2003-2006 Accelerometer Data}
+\title{Process NHANES 2003-2006 Accelerometer Data (Alternate Implementation)}
 \usage{
 process_nhanes(waves = 3, directory = getwd(), nci_methods = FALSE,
   brevity = 1, hourly_var = "cpm", hourly_wearmin = 0,
-  hourly_normalize = FALSE, valid_days = 1, valid_week_days = 0,
-  valid_weekend_days = 0, int_cuts = c(100, 760, 2020, 5999),
+  hourly_normalize = FALSE, valid_days = 1, valid_wk_days = 0,
+  valid_we_days = 0, int_cuts = c(100, 760, 2020, 5999),
   youth_mod_cuts = rep(int_cuts[3], 12), youth_vig_cuts = rep(int_cuts[4],
   12), cpm_nci = FALSE, days_distinct = FALSE, nonwear_window = 60,
   nonwear_tol = 0, nonwear_tol_upper = 99, nonwear_nci = FALSE,
@@ -31,9 +31,9 @@ specifically:
 
 \code{valid_days = 4}
 
-\code{valid_week_days = 0}
+\code{valid_wk_days = 0}
 
-\code{valid_weekend_days = 0}
+\code{valid_we_days = 0}
 
 \code{int_cuts = c(100, 760, 2020, 5999)}
 
@@ -94,11 +94,11 @@ activity by number of wear time minutes.}
 \item{valid_days}{Integer value specifying minimum number of valid days to
 be considered valid for analysis.}
 
-\item{valid_week_days}{Integer value specifying minimum number of valid
+\item{valid_wk_days}{Integer value specifying minimum number of valid
 weekdays to be considered valid for analysis.}
 
-\item{valid_weekend_days}{Integer value specifying minimum number of valid
-weekend days to be considered valid for analysis.}
+\item{valid_we_days}{Integer value specifying minimum number of valid weekend
+days to be considered valid for analysis.}
 
 \item{int_cuts}{Numeric vector with four cutpoints from which five intensity
 ranges are derived. For example, \code{int_cuts = c(100, 760, 2020, 5999)}

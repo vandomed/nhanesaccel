@@ -1,4 +1,4 @@
-#' Process NHANES 2003-2006 Accelerometer Data
+#' Process NHANES 2003-2006 Accelerometer Data (Alternate Implementation)
 #'
 #' Calculates a variety of physical activity variables from the time-series
 #' accelerometer data in NHANES 2003-2006. A data dictionary for the variables
@@ -17,9 +17,9 @@
 #'
 #' \code{valid_days = 4}
 #'
-#' \code{valid_week_days = 0}
+#' \code{valid_wk_days = 0}
 #'
-#' \code{valid_weekend_days = 0}
+#' \code{valid_we_days = 0}
 #'
 #' \code{int_cuts = c(100, 760, 2020, 5999)}
 #'
@@ -80,11 +80,11 @@
 #' @param valid_days Integer value specifying minimum number of valid days to
 #' be considered valid for analysis.
 #'
-#' @param valid_week_days Integer value specifying minimum number of valid
+#' @param valid_wk_days Integer value specifying minimum number of valid
 #' weekdays to be considered valid for analysis.
 #'
-#' @param valid_weekend_days Integer value specifying minimum number of valid
-#' weekend days to be considered valid for analysis.
+#' @param valid_we_days Integer value specifying minimum number of valid weekend
+#' days to be considered valid for analysis.
 #'
 #' @param int_cuts Numeric vector with four cutpoints from which five intensity
 #' ranges are derived. For example, \code{int_cuts = c(100, 760, 2020, 5999)}
@@ -239,8 +239,8 @@ process_nhanes <- function(waves = 3,
                            hourly_wearmin = 0,
                            hourly_normalize = FALSE,
                            valid_days = 1,
-                           valid_week_days = 0,
-                           valid_weekend_days = 0,
+                           valid_wk_days = 0,
+                           valid_we_days = 0,
                            int_cuts = c(100, 760, 2020, 5999),
                            youth_mod_cuts = rep(int_cuts[3], 12),
                            youth_vig_cuts = rep(int_cuts[4], 12),
@@ -269,8 +269,8 @@ process_nhanes <- function(waves = 3,
   if (nci_methods) {
 
     valid_days <- 4
-    valid_week_days <- 0
-    valid_weekend_days <- 0
+    valid_wk_days <- 0
+    valid_we_days <- 0
     int_cuts <- c(100, 760, 2020, 5999)
     youth_mod_cuts <- c(1400, 1515, 1638, 1770, 1910, 2059, 2220, 2393, 2580,
                         2781, 3000, 3239)
@@ -330,11 +330,13 @@ process_nhanes <- function(waves = 3,
     wave1_paxday <- w1[, 6]
     wave1_ages <- w1[, 7]
 
-    # Initialize matrix to save daily physical activity variables
-    day.vars1 <- matrix(NA, ncol = 68, nrow = 7176 * 7)
+    # Initialize lists for per-day and per-person variables
+    person.vars1 <- list()
+    day.vars1 <- list()
 
-    # k is the "day counter"
-    k <- 0
+    # Initialize vectors for non-valid IDs
+    invalid.ii <- c()
+    invalid.ids <- c()
 
     # Initialize progress bar for data processing
     cat("\nProcessing NHANES 2003-2004 data...\n")
@@ -363,80 +365,11 @@ process_nhanes <- function(waves = 3,
 
       # If < weartime_minimum minutes of data or status/calibration > 1, skip
       if (n.minutes < 1440 || stat.ii > 1 || cal.ii > 1) {
-        k <- k + 1
-        day.vars1[k, 1] <- ids.ii
-        day.vars1[k, 2: 3] <- 0
+        invalid.ii <- c(invalid.ii, ii)
+        invalid.ids <- c(invalid.ids, ids.ii)
+        day.vars1[[ii]] <- NA
+        person.vars1[[ii]] <- NA
         next
-      }
-
-      # If artifact_action = 3, replace minutes with counts >= artifact_thresh
-      # with average of surrounding minutes
-      if (artifact_action == 3) {
-        counts.ii <- artifacts(counts = counts.ii, thresh = artifact_thresh)
-      }
-
-      # Call weartime function to flag minutes valid for analysis
-      wearflag.ii <- weartime(counts = counts.ii,
-                              window = nonwear_window,
-                              tol = nonwear_tol,
-                              tol_upper = nonwear_tol_upper,
-                              nci = nonwear_nci,
-                              days_distinct = days_distinct)
-
-      # If artifact_action = 2, consider minutes with counts >= artifact_thresh
-      # non-wear time
-      if (artifact_action == 2) {
-        artifact.locs <- which(counts.ii >= artifact_thresh)
-        wearflag.ii[artifact.locs] <- 0
-        counts.ii[artifact.locs] <- 0
-      }
-
-      # If total wear time < weartime_minimum, no chance of having 1 valid day
-      if (sum(wearflag.ii) < weartime_minimum) {
-        k <- k + 1
-        day.vars1[k, 1] <- ids.ii
-        day.vars1[k, 2: 3] <- 0
-        next
-      }
-
-      # Identify MVPA, vigorous, and sedentary bouts
-      if (brevity %in% c(2, 3)) {
-
-        # Assign moderate and vigorous cutpoints according to age
-        int_cuts <- int_cuts_original
-        age.ii <- wave1_ages[ii]
-        if (age.ii < 18) {
-          int_cuts[3] <- youth_mod_cuts[age.ii - 5]
-          int_cuts[4] <- youth_vig_cuts[age.ii - 5]
-        }
-
-        bouted.MVPA.ii <-
-          bouts(counts = counts.ii, weartime = wearflag.ii,
-                bout_length = active_bout_length, thresh_lower = int_cuts[3],
-                tol = active_bout_tol, tol_lower = mvpa_bout_tol_lower,
-                nci = active_bout_nci, days_distinct = days_distinct)
-
-        bouted.vig.ii <-
-          bouts(counts = counts.ii, weartime = wearflag.ii,
-                bout_length = active_bout_length, thresh_lower = int_cuts[4],
-                tol = active_bout_tol, tol_lower = vig_bout_tol_lower,
-                nci = active_bout_nci, days_distinct = days_distinct)
-
-        bouted.sed10.ii <-
-          bouts(counts = counts.ii, weartime = wearflag.ii, bout_length = 10,
-                thresh_upper = int_cuts[1] - 1, tol = sed_bout_tol,
-                tol_upper = sed_bout_tol_maximum, days_distinct = days_distinct)
-
-        bouted.sed30.ii <-
-          bouts(counts = counts.ii, weartime = wearflag.ii, bout_length = 30,
-                thresh_upper = int_cuts[1] - 1, tol = sed_bout_tol,
-                tol_upper = sed_bout_tol_maximum, days_distinct = days_distinct)
-
-        bouted.sed60.ii <-
-          bouts(counts = counts.ii, weartime = wearflag.ii, bout_length = 60,
-                thresh_upper = int_cuts[1] - 1, tol = sed_bout_tol,
-                tol_upper = sed_bout_tol_maximum, days_distinct = days_distinct)
-
       }
 
       # Get start/end indices for each day of monitoring
@@ -449,164 +382,75 @@ process_nhanes <- function(waves = 3,
       days <- start.day: (start.day + n.days)
       days <- ifelse(days > 7, days - 7, days)
 
-      # Loop through each day of data
-      for (jj in 1: n.days) {
-
-        # Row index and day of week
-        k <- k + 1
-        day.jj <- days[jj]
-
-        # Load data for jjth day
-        start.jj <- start.indices[jj]
-        end.jj <- end.indices[jj]
-        counts.jj <- counts.ii[start.jj: end.jj]
-        wearflag.jj <- wearflag.ii[start.jj: end.jj]
-        if (brevity %in% c(2, 3)) {
-          bouted.MVPA.jj <- bouted.MVPA.ii[start.jj: end.jj]
-          bouted.vig.jj <- bouted.vig.ii[start.jj: end.jj]
-          bouted.sed10.jj <- bouted.sed10.ii[start.jj: end.jj]
-          bouted.sed30.jj <- bouted.sed30.ii[start.jj: end.jj]
-          bouted.sed60.jj <- bouted.sed60.ii[start.jj: end.jj]
-        }
-
-        # Calculating constants that are used more than once
-        sum_wearflag.jj <- sum(wearflag.jj)
-        max_counts.jj <- max(counts.jj)
-
-        # NHANES ID number and day of week
-        day.vars1[k, 1: 2] <- c(ids.ii, day.jj)
-
-        # Valid day
-        if (! inside(sum_wearflag.jj, weartime.range) ||
-            (artifact_action == 1 & max_counts.jj >= artifact_thresh)) {
-          day.vars1[k, 3] <- 0
-          next
-        } else {
-          day.vars1[k, 3] <- 1
-        }
-
-        # Wear time minutes
-        day.vars1[k, 4] <- sum_wearflag.jj
-
-        # Create vector of counts during wear time
-        wearcounts.jj <- counts.jj[wearflag.jj == 1]
-
-        # Total counts during wear time
-        sum_wearcounts.jj <- sum(wearcounts.jj)
-        day.vars1[k, 5] <- sum_wearcounts.jj
-
-        # Counts per minute
-        day.vars1[k, 6] <- sum_wearcounts.jj / sum_wearflag.jj
-
-        if (brevity %in% c(2, 3)) {
-
-          # Minutes in each intensity
-          intensities.jj <- intensities(counts = wearcounts.jj,
-                                        int_cuts = int_cuts)
-          intensities.min.jj <- intensities.jj[1: 8]
-          day.vars1[k, 8: 15] <- intensities.min.jj
-
-          # Percentage of wear time in each intensity
-          day.vars1[k, 16: 23] <- intensities.min.jj / sum_wearflag.jj
-
-          # Counts accumulated from each intensity
-          day.vars1[k, 24: 31] <- intensities.jj[9: 16]
-
-          # Bouted sedentary time
-          day.vars1[k, 32: 34] <- c(sum(bouted.sed10.jj),
-                                    sum(bouted.sed30.jj),
-                                    sum(bouted.sed60.jj))
-
-          # Sedentary breaks
-          day.vars1[k, 35] <- sedbreaks(counts = counts.jj,
-                                        weartime = wearflag.jj,
-                                        thresh = int_cuts[1])
-
-          # Maximum 1-min, 5-min, 10-min, and 30-min count average
-          day.vars1[k, 36] <- max_counts.jj
-          day.vars1[k, 37] <- movingaves(x = counts.jj, window = 5, max = TRUE)
-          day.vars1[k, 38] <- movingaves(x = counts.jj, window = 10, max = TRUE)
-          day.vars1[k, 39] <- movingaves(x = counts.jj, window = 30, max = TRUE)
-
-          # Minutes in MVPA and vigorous bouts
-          sum_bouted.MVPA.jj <- sum(bouted.MVPA.jj)
-          sum_bouted.vig.jj <- sum(bouted.vig.jj)
-          day.vars1[k, 42] <- sum_bouted.MVPA.jj
-          day.vars1[k, 43] <- sum_bouted.vig.jj
-
-          # Guideline minutes
-          day.vars1[k, 44] <- sum_bouted.MVPA.jj + sum_bouted.vig.jj
-
-          # Number of MVPA and vigorous bouts
-          if (sum_bouted.MVPA.jj > 0) {
-            day.vars1[k, 40] <- sum(rle2(bouted.MVPA.jj)[, 1] == 1)
-          } else {
-            day.vars1[k, 40] <- 0
-          }
-          if (sum_bouted.vig.jj > 0) {
-            day.vars1[k, 41] <- sum(rle2(bouted.vig.jj)[, 1] == 1)
-          } else {
-            day.vars1[k, 41] <- 0
-          }
-
-          if (brevity == 3) {
-
-            # Hourly variable - first analyze all minutes
-            if (hourly_var == "counts") {
-              day.vars1[k, 45: 68] <- blocksums(x = counts.jj * wearflag.jj,
-                                                 window = 60)
-            } else if (hourly_var == "cpm") {
-              day.vars1[k, 45: 68] <- blockaves(x = counts.jj * wearflag.jj,
-                                                window = 60)
-            } else if (hourly_var == "sed_min") {
-              day.vars1[k, 45: 68] <- blocksums(x = counts.jj < int_cuts[1],
-                                                window = 60)
-            } else if (hourly_var == "sed_bouted_10min") {
-              day.vars1[k, 45: 68] <- blocksums(x = bouted.sed10.jj,
-                                                window = 60)
-            } else if (hourly_var == "sed_breaks") {
-              sedbreaks.jj <- sedbreaks(counts = counts.jj,
-                                        weartime = wearflag.jj, flags = TRUE)
-              day.vars1[k, 45: 68] <- blocksums(x = sedbreaks.jj, window = 60)
-            }
-
-            # Calculate hourly wear time if necessary
-            if (hourly_normalize || hourly_wearmin > 0) {
-              hourly.weartime <- blocksums(x = wearflag.jj, window = 60)
-            }
-
-            # Normalize for wear time if requested
-            if (hourly_normalize) {
-              day.vars1[k, 45: 68] <- day.vars1[k, 45: 68] / hourly.weartime
-            }
-
-            # Replace with NAs where wear time is insufficient
-            if (hourly_wearmin > 0) {
-              day.vars1[k, 45: 68] <- day.vars1[k, 45: 68] *
-                ifelse(hourly.weartime >= hourly_wearmin, 1, NA)
-            }
-
-          }
-        }
+      # Assign moderate and vigorous cutpoints according to age
+      int_cuts <- int_cuts_original
+      age.ii <- wave1_ages[ii]
+      if (age.ii < 18) {
+        int_cuts[3] <- youth_mod_cuts[age.ii - 5]
+        int_cuts[4] <- youth_vig_cuts[age.ii - 5]
       }
+
+      # Call process_uni
+      vars.ii <-
+        process_uni(counts = counts.ii,
+                    start_day = start.day,
+                    id = ids.ii,
+                    brevity = brevity,
+                    hourly_var = hourly_var,
+                    hourly_wearmin = hourly_wearmin,
+                    hourly_normalize = hourly_normalize,
+                    valid_days = valid_days,
+                    valid_wk_days = valid_wk_days,
+                    valid_we_days = valid_we_days,
+                    int_cuts = int_cuts,
+                    cpm_nci = cpm_nci,
+                    days_distinct = days_distinct,
+                    nonwear_window = nonwear_window,
+                    nonwear_tol = nonwear_tol,
+                    nonwear_tol_upper = nonwear_tol_upper,
+                    nonwear_nci = nonwear_nci,
+                    weartime_minimum = weartime_minimum,
+                    weartime_maximum = weartime_maximum,
+                    active_bout_length = active_bout_length,
+                    active_bout_tol = active_bout_tol,
+                    mvpa_bout_tol_lower = mvpa_bout_tol_lower,
+                    vig_bout_tol_lower = vig_bout_tol_lower,
+                    active_bout_nci = active_bout_nci,
+                    sed_bout_tol = sed_bout_tol,
+                    sed_bout_tol_maximum = sed_bout_tol_maximum,
+                    artifact_thresh = artifact_thresh,
+                    artifact_action = artifact_action,
+                    weekday_weekend = weekday_weekend,
+                    return_form = return_form)
+
+      if (return_form == 1) {
+        person.vars1[[ii]] <- vars.ii
+      } else if (return_form == 2) {
+        day.vars1[[ii]] <- vars.ii
+      } else {
+        person.vars1[[ii]] <- vars.ii$averages
+        day.vars1[[ii]] <- vars.ii$day.vars
+      }
+
     }
 
-    # Delete empty rows
-    day.vars1 <- day.vars1[1: k, ]
-
-    # Calculate per-person averages
-    person.aves1 <- personvars(dayvars = day.vars1, rows = ii,
-                               days = valid_days, wk = valid_week_days,
-                               we = valid_weekend_days)
-
-    # Calculate adjusted 2-year MEC weight
-    person.aves1 <- reweight_nhanes(accel_data = person.aves1, wave = 1,
-                                    seqn_column = 1, include_column = 5)
-
-    # Add variables nhanes_wave and adjusted 4-year MEC weight
-    person.aves1 <- cbind(person.aves1[, 1],
-                          rep(1, nrow(person.aves1)),
-                          person.aves1[, 2: 201], person.aves1[, 201] / 2)
+    # Convert lists to matrices
+    if (return_form %in% c(2, 3)) {
+      day.vars1 <- do.call(rbind, day.vars1)
+      locs <- which(is.na(day.vars1[, 1]))
+      day.vars1[locs, 1] <- invalid.ids
+      day.vars1[locs, 3] <- 0
+    }
+    if (return_form %in% c(1, 3)) {
+      person.vars1 <- do.call(rbind, person.vars1)
+      person.vars1[invalid.ii, 1] <- invalid.ids
+      person.vars1[invalid.ii, 2: 5] <- 0
+      person.vars1 <- reweight_nhanes(accel_data = person.vars1, wave = 1,
+                                      seqn_column = 1, include_column = 5)
+      person.vars1 <- as.data.frame(person.vars1)
+      person.vars1$wtmec4yr_adj <- person.vars1$wtmec2yr_adj / 2
+      person.vars1$nhanes_wave <- 1
+    }
 
     # Clear variables
     rm(w1, wave1_paxstat, wave1_paxcal, wave1_paxday, wave1_paxinten, wave1_ages)
@@ -646,11 +490,13 @@ process_nhanes <- function(waves = 3,
     wave2_paxday <- w2[, 6]
     wave2_ages <- w2[, 7]
 
-    # Initialize matrix to save daily physical activity variables
-    day.vars2 <- matrix(NA, ncol = 68, nrow = 7455 * 7)
+    # Initialize lists for per-day and per-person variables
+    person.vars2 <- list()
+    day.vars2 <- list()
 
-    # k is the "day counter"
-    k <- 0
+    # Initialize vectors for non-valid IDs
+    invalid.ii <- c()
+    invalid.ids <- c()
 
     # Initialize progress bar for data processing
     cat("\nProcessing NHANES 2005-2006 data...\n")
@@ -670,6 +516,8 @@ process_nhanes <- function(waves = 3,
       counts.ii <- wave2_paxinten[mat1[ii, 2]: mat1[ii, 3]]
       if (brevity %in% c(2, 3)) {
         steps.ii <- wave2_paxstep[mat1[ii, 2]: mat1[ii, 3]]
+      } else {
+        steps.ii <- NULL
       }
 
       # Get values for id, paxstat, and paxcal
@@ -682,80 +530,11 @@ process_nhanes <- function(waves = 3,
 
       # If < weartime_minimum minutes of data or status/calibration > 1, skip
       if (n.minutes < 1440 || stat.ii > 1 || cal.ii > 1) {
-        k <- k + 1
-        day.vars2[k, 1] <- ids.ii
-        day.vars2[k, 2: 3] <- 0
+        invalid.ii <- c(invalid.ii, ii)
+        invalid.ids <- c(invalid.ids, ids.ii)
+        day.vars2[[ii]] <- NA
+        person.vars2[[ii]] <- NA
         next
-      }
-
-      # If artifact_action = 3, replace minutes with counts >= artifact.thresh
-      # with average of surrounding minutes
-      if (artifact_action == 3) {
-        counts.ii <- artifacts(counts = counts.ii, thresh = artifact_thresh)
-      }
-
-      # Call weartime function to flag minutes valid for analysis
-      wearflag.ii <- weartime(counts = counts.ii,
-                              window = nonwear_window,
-                              tol = nonwear_tol,
-                              tol_upper = nonwear_tol_upper,
-                              nci = nonwear_nci,
-                              days_distinct = days_distinct)
-
-      # If artifact_action = 2, consider minutes with counts >= artifact_thresh
-      # non-wear time
-      if (artifact_action == 2) {
-        artifact.locs <- which(counts.ii >= artifact_thresh)
-        wearflag.ii[artifact.locs] <- 0
-        counts.ii[artifact.locs] <- 0
-      }
-
-      # If total wear time < weartime_minimum, no chance of having 1 valid day
-      if (sum(wearflag.ii) < weartime_minimum) {
-        k <- k + 1
-        day.vars2[k, 1] <- ids.ii
-        day.vars2[k, 2: 3] <- 0
-        next
-      }
-
-      # Identify MVPA, vigorous, and sedentary bouts
-      if (brevity %in% c(2, 3)) {
-
-        # Assign moderate and vigorous cutpoints according to age
-        int_cuts <- int_cuts_original
-        age.ii <- wave2_ages[ii]
-        if (age.ii < 18) {
-          int_cuts[3] <- youth_mod_cuts[age.ii - 5]
-          int_cuts[4] <- youth_vig_cuts[age.ii - 5]
-        }
-
-        bouted.MVPA.ii <-
-          bouts(counts = counts.ii, weartime = wearflag.ii,
-                bout_length = active_bout_length, thresh_lower = int_cuts[3],
-                tol = active_bout_tol, tol_lower = mvpa_bout_tol_lower,
-                nci = active_bout_nci, days_distinct = days_distinct)
-
-        bouted.vig.ii <-
-          bouts(counts = counts.ii, weartime = wearflag.ii,
-                bout_length = active_bout_length, thresh_lower = int_cuts[4],
-                tol = active_bout_tol, tol_lower = vig_bout_tol_lower,
-                nci = active_bout_nci, days_distinct = days_distinct)
-
-        bouted.sed10.ii <-
-          bouts(counts = counts.ii, weartime = wearflag.ii, bout_length = 10,
-                thresh_upper = int_cuts[1] - 1, tol = sed_bout_tol,
-                tol_upper = sed_bout_tol_maximum, days_distinct = days_distinct)
-
-        bouted.sed30.ii <-
-          bouts(counts = counts.ii, weartime = wearflag.ii, bout_length = 30,
-                thresh_upper = int_cuts[1] - 1, tol = sed_bout_tol,
-                tol_upper = sed_bout_tol_maximum, days_distinct = days_distinct)
-
-        bouted.sed60.ii <-
-          bouts(counts = counts.ii, weartime = wearflag.ii, bout_length = 60,
-                thresh_upper = int_cuts[1] - 1, tol = sed_bout_tol,
-                tol_upper = sed_bout_tol_maximum, days_distinct = days_distinct)
-
       }
 
       # Get start/end indices for each day of monitoring
@@ -768,168 +547,76 @@ process_nhanes <- function(waves = 3,
       days <- start.day: (start.day + n.days)
       days <- ifelse(days > 7, days - 7, days)
 
-      # Loop through each day of data
-      for (jj in 1: n.days) {
-
-        # Row index and day of week
-        k <- k + 1
-        day.jj <- days[jj]
-
-        # Load data for jjth day
-        start.jj <- start.indices[jj]
-        end.jj <- end.indices[jj]
-        counts.jj <- counts.ii[start.jj: end.jj]
-        wearflag.jj <- wearflag.ii[start.jj: end.jj]
-        if (brevity %in% c(2, 3)) {
-          steps.jj <- steps.ii[start.jj: end.jj]
-          bouted.MVPA.jj <- bouted.MVPA.ii[start.jj: end.jj]
-          bouted.vig.jj <- bouted.vig.ii[start.jj: end.jj]
-          bouted.sed10.jj <- bouted.sed10.ii[start.jj: end.jj]
-          bouted.sed30.jj <- bouted.sed30.ii[start.jj: end.jj]
-          bouted.sed60.jj <- bouted.sed60.ii[start.jj: end.jj]
-        }
-
-        # Calculating constants that are used more than once
-        sum_wearflag.jj <- sum(wearflag.jj)
-        max_counts.jj <- max(counts.jj)
-
-        # NHANES ID number and day of week
-        day.vars2[k, 1: 2] <- c(ids.ii, day.jj)
-
-        # Valid day
-        if (! inside(sum_wearflag.jj, weartime.range) ||
-            (artifact_action == 1 & max_counts.jj >= artifact_thresh)) {
-          day.vars2[k, 3] <- 0
-          next
-        } else {
-          day.vars2[k, 3] <- 1
-        }
-
-        # Wear time minutes
-        day.vars2[k, 4] <- sum_wearflag.jj
-
-        # Create vector of counts during wear time
-        wearcounts.jj <- counts.jj[wearflag.jj == 1]
-
-        # Total counts during wear time
-        sum_wearcounts.jj <- sum(wearcounts.jj)
-        day.vars2[k, 5] <- sum_wearcounts.jj
-
-        # Counts per minute
-        day.vars2[k, 6] <- sum_wearcounts.jj / sum_wearflag.jj
-
-        if (brevity %in% c(2, 3)) {
-
-          # Steps
-          day.vars2[k, 7] <- sum(steps.jj[wearflag.jj == 1])
-
-          # Minutes in each intensity
-          intensities.jj <- intensities(counts = wearcounts.jj,
-                                        int_cuts = int_cuts)
-          intensities.min.jj <- intensities.jj[1: 8]
-          day.vars2[k, 8: 15] <- intensities.min.jj
-
-          # Percentage of wear time in each intensity
-          day.vars2[k, 16: 23] <- intensities.min.jj / sum_wearflag.jj
-
-          # Counts accumulated from each intensity
-          day.vars2[k, 24: 31] <- intensities.jj[9: 16]
-
-          # Bouted sedentary time
-          day.vars2[k, 32: 34] <- c(sum(bouted.sed10.jj),
-                                    sum(bouted.sed30.jj),
-                                    sum(bouted.sed60.jj))
-
-          # Sedentary breaks
-          day.vars2[k, 35] <- sedbreaks(counts = counts.jj,
-                                        weartime = wearflag.jj,
-                                        thresh = int_cuts[1])
-
-          # Maximum 1-min, 5-min, 10-min, and 30-min count average
-          day.vars2[k, 36] <- max_counts.jj
-          day.vars2[k, 37] <- movingaves(x = counts.jj, window = 5, max = TRUE)
-          day.vars2[k, 38] <- movingaves(x = counts.jj, window = 10, max = TRUE)
-          day.vars2[k, 39] <- movingaves(x = counts.jj, window = 30, max = TRUE)
-
-          # Minutes in MVPA and vigorous bouts
-          sum_bouted.MVPA.jj <- sum(bouted.MVPA.jj)
-          sum_bouted.vig.jj <- sum(bouted.vig.jj)
-          day.vars2[k, 42] <- sum_bouted.MVPA.jj
-          day.vars2[k, 43] <- sum_bouted.vig.jj
-
-          # Guideline minutes
-          day.vars2[k, 44] <- sum_bouted.MVPA.jj + sum_bouted.vig.jj
-
-          # Number of MVPA and vigorous bouts
-          if (sum_bouted.MVPA.jj > 0) {
-            day.vars2[k, 40] <- sum(rle2(bouted.MVPA.jj)[, 1] == 1)
-          } else {
-            day.vars2[k, 40] <- 0
-          }
-          if (sum_bouted.vig.jj > 0) {
-            day.vars2[k, 41] <- sum(rle2(bouted.vig.jj)[, 1] == 1)
-          } else {
-            day.vars2[k, 41] <- 0
-          }
-
-          if (brevity == 3) {
-
-            # Hourly variable - first analyze all minutes
-            if (hourly_var == "counts") {
-              day.vars2[k, 45: 68] <- blocksums(x = counts.jj * wearflag.jj,
-                                                window = 60)
-            } else if (hourly_var == "cpm") {
-              day.vars2[k, 45: 68] <- blockaves(x = counts.jj * wearflag.jj,
-                                                window = 60)
-            } else if (hourly_var == "sed_min") {
-              day.vars2[k, 45: 68] <- blocksums(x = counts.jj < int_cuts[1],
-                                                window = 60)
-            } else if (hourly_var == "sed_bouted_10min") {
-              day.vars2[k, 45: 68] <- blocksums(x = bouted.sed10.jj,
-                                                window = 60)
-            } else if (hourly_var == "sed_breaks") {
-              sedbreaks.jj <- sedbreaks(counts = counts.jj,
-                                        weartime = wearflag.jj, flags = TRUE)
-              day.vars2[k, 45: 68] <- blocksums(x = sedbreaks.jj, window = 60)
-            }
-
-            # Calculate hourly wear time if necessary
-            if (hourly_normalize || hourly_wearmin > 0) {
-              hourly.weartime <- blocksums(x = wearflag.jj, window = 60)
-            }
-
-            # Normalize for wear time if requested
-            if (hourly_normalize) {
-              day.vars2[k, 45: 68] <- day.vars2[k, 45: 68] / hourly.weartime
-            }
-
-            # Replace with NAs where wear time is insufficient
-            if (hourly_wearmin > 0) {
-              day.vars2[k, 45: 68] <- day.vars2[k, 45: 68] *
-                ifelse(hourly.weartime >= hourly_wearmin, 1, NA)
-            }
-
-          }
-        }
+      # Assign moderate and vigorous cutpoints according to age
+      int_cuts <- int_cuts_original
+      age.ii <- wave2_ages[ii]
+      if (age.ii < 18) {
+        int_cuts[3] <- youth_mod_cuts[age.ii - 5]
+        int_cuts[4] <- youth_vig_cuts[age.ii - 5]
       }
+
+      # Call process_uni
+      vars.ii <-
+        process_uni(counts = counts.ii,
+                    steps = steps.ii,
+                    start_day = start.day,
+                    id = ids.ii,
+                    brevity = brevity,
+                    hourly_var = hourly_var,
+                    hourly_wearmin = hourly_wearmin,
+                    hourly_normalize = hourly_normalize,
+                    valid_days = valid_days,
+                    valid_wk_days = valid_wk_days,
+                    valid_we_days = valid_we_days,
+                    int_cuts = int_cuts,
+                    cpm_nci = cpm_nci,
+                    days_distinct = days_distinct,
+                    nonwear_window = nonwear_window,
+                    nonwear_tol = nonwear_tol,
+                    nonwear_tol_upper = nonwear_tol_upper,
+                    nonwear_nci = nonwear_nci,
+                    weartime_minimum = weartime_minimum,
+                    weartime_maximum = weartime_maximum,
+                    active_bout_length = active_bout_length,
+                    active_bout_tol = active_bout_tol,
+                    mvpa_bout_tol_lower = mvpa_bout_tol_lower,
+                    vig_bout_tol_lower = vig_bout_tol_lower,
+                    active_bout_nci = active_bout_nci,
+                    sed_bout_tol = sed_bout_tol,
+                    sed_bout_tol_maximum = sed_bout_tol_maximum,
+                    artifact_thresh = artifact_thresh,
+                    artifact_action = artifact_action,
+                    weekday_weekend = weekday_weekend,
+                    return_form = return_form)
+
+      if (return_form == 1) {
+        person.vars2[[ii]] <- vars.ii
+      } else if (return_form == 2) {
+        day.vars2[[ii]] <- vars.ii
+      } else {
+        person.vars2[[ii]] <- vars.ii$averages
+        day.vars2[[ii]] <- vars.ii$day.vars
+      }
+
     }
 
-    # Delete empty rows
-    day.vars2 <- day.vars2[1: k, ]
-
-    # Calculate per-person averages
-    person.aves2 <- personvars(dayvars = day.vars2, rows = ii,
-                               days = valid_days, wk = valid_week_days,
-                               we = valid_weekend_days)
-
-    # Calculate adjusted 2-year MEC weight
-    person.aves2 <- reweight_nhanes(accel_data = person.aves2, wave = 1,
-                                    seqn_column = 1, include_column = 5)
-
-    # Add variables nhanes_wave and adjusted 4-year MEC weight
-    person.aves2 <- cbind(person.aves2[, 1],
-                          rep(1, nrow(person.aves2)),
-                          person.aves2[, 2: 201], person.aves2[, 201] / 2)
+    # Convert lists to matrices
+    if (return_form %in% c(2, 3)) {
+      day.vars2 <- do.call(rbind, day.vars2)
+      locs <- which(is.na(day.vars2[, 1]))
+      day.vars2[locs, 1] <- invalid.ids
+      day.vars2[locs, 3] <- 0
+    }
+    if (return_form %in% c(1, 3)) {
+      person.vars2 <- do.call(rbind, person.vars2)
+      person.vars2[invalid.ii, 1] <- invalid.ids
+      person.vars2[invalid.ii, 2: 5] <- 0
+      person.vars2 <- reweight_nhanes(accel_data = person.vars2, wave = 2,
+                                      seqn_column = 1, include_column = 5)
+      person.vars2 <- as.data.frame(person.vars2)
+      person.vars2$wtmec4yr_adj <- person.vars2$wtmec2yr_adj / 2
+      person.vars2$nhanes_wave <- 2
+    }
 
     # Clear variables
     rm(w2, wave2_paxstat, wave2_paxcal, wave2_paxday, wave2_paxinten,
@@ -939,138 +626,32 @@ process_nhanes <- function(waves = 3,
 
   # Combine 2003-2004 and 2005-2006 data if necessary
   if (waves == 1) {
-    day.vars <- day.vars1
-    person.aves <- person.aves1
+    if (return_form == 1) {
+      person.vars <- person.vars1
+    } else if (return_form == 2) {
+      day.vars <- day.vars1
+    } else {
+      day.vars <- day.vars1
+      person.vars <- person.vars1
+    }
   } else if (waves == 2) {
-    day.vars <- day.vars2
-    person.aves <- person.aves2
-  } else if (waves == 3) {
-    day.vars <- rbind(day.vars1, day.vars2)
-    person.aves <- rbind(person.aves1, person.aves2)
-  }
-
-  # Prepare data frame with day-to-day variables if requested
-  if (return_form %in% c(2, 3)) {
-
-    # Add NHANES wave variable
-    day.vars <- cbind(day.vars[, 1], ifelse(day.vars[, 1] > 31125, 2, 1),
-                      day.vars[, 2: ncol(day.vars)])
-
-    # Format day.vars
-    if (brevity == 1) {
-
-      day.vars <- day.vars[, 1: 7]
-      colnames(day.vars) <- c("seqn", "nhanes_wave", "day", "valid_day",
-                              "valid_min", "counts", "cpm")
-
-    } else if (brevity == 2) {
-
-      day.vars <- day.vars[, 1: 45]
-      colnames(day.vars) <-
-        c("seqn", "nhanes_wave", "day", "valid_day", "valid_min", "counts",
-          "cpm", "steps", "sed_min", "light_min", "life_min", "mod_min",
-          "vig_min", "lightlife_min", "mvpa_min", "active_min", "sed_percent",
-          "light_percent", "life_percent", "mod_percent", "vig_percent",
-          "lightlife_percent", "mvpa_percent", "active_percent", "sed_counts",
-          "light_counts", "life_counts", "mod_counts", "vig_counts",
-          "lightlife_counts", "mvpa_counts", "active_counts",
-          "sed_bouted_10min", "sed_bouted_30min", "sed_bouted_60min",
-          "sed_breaks", "max_1min_counts", "max_5min_counts",
-          "max_10min_counts", "max_30min_counts", "num_mvpa_bouts",
-          "num_vig_bouts", "mvpa_bouted", "vig_bouted", "guideline_min")
-
-    } else if (brevity == 3) {
-
-      colnames(day.vars) <-
-        c("seqn", "nhanes_wave", "day", "valid_day", "valid_min", "counts",
-          "cpm", "steps", "sed_min", "light_min", "life_min", "mod_min",
-          "vig_min", "lightlife_min", "mvpa_min", "active_min", "sed_percent",
-          "light_percent", "life_percent", "mod_percent", "vig_percent",
-          "lightlife_percent", "mvpa_percent", "active_percent", "sed_counts",
-          "light_counts", "life_counts", "mod_counts", "vig_counts",
-          "lightlife_counts", "mvpa_counts", "active_counts",
-          "sed_bouted_10min", "sed_bouted_30min", "sed_bouted_60min",
-          "sed_breaks", "max_1min_counts", "max_5min_counts",
-          "max_10min_counts", "max_30min_counts", "num_mvpa_bouts",
-          "num_vig_bouts", "mvpa_bouted", "vig_bouted", "guideline_min",
-          paste(hourly_var, "_hour", 1: 24, sep = ""))
-
+    if (return_form == 1) {
+      person.vars <- person.vars2
+    } else if (return_form == 2) {
+      day.vars <- day.vars2
+    } else {
+      day.vars <- day.vars2
+      person.vars <- person.vars2
     }
-
-    # Drop steps if necessary
-    if (waves == 1 & brevity %in% c(2, 3)) {
-      day.vars <- day.vars[, -8, drop = FALSE]
+  } else {
+    if (return_form == 1) {
+      person.vars <- rbind(person.vars1, person.vars2)
+    } else if (return_form == 2) {
+      day.vars <- rbind(day.vars1, day.vars2)
+    } else {
+      day.vars <- rbind(day.vars1, day.vars2)
+      person.vars <- rbind(person.vars1, person.vars2)
     }
-
-  }
-
-  # Calculate daily averages
-  if (return_form %in% c(1, 3)) {
-
-    # Add variable names to per-person dataset
-    varnames <- c("seqn", "nhanes_wave", "valid_days", "valid_week_days",
-                  "valid_weekend_days", "include", "valid_min", "counts", "cpm",
-                  "steps", "sed_min", "light_min", "life_min", "mod_min",
-                  "vig_min", "lightlife_min", "mvpa_min", "active_min",
-                  "sed_percent", "light_percent", "life_percent", "mod_percent",
-                  "vig_percent", "lightlife_percent", "mvpa_percent",
-                  "active_percent", "sed_counts", "light_counts", "life_counts",
-                  "mod_counts", "vig_counts", "lightlife_counts", "mvpa_counts",
-                  "active_counts", "sed_bouted_10min", "sed_bouted_30min",
-                  "sed_bouted_60min", "sed_breaks", "max_1min_counts",
-                  "max_5min_counts", "max_10min_counts", "max_30min_counts",
-                  "num_mvpa_bouts", "num_vig_bouts", "mvpa_bouted",
-                  "vig_bouted", "guideline_min",
-                  paste(hourly_var, "_hour", 1: 24, sep = ""))
-    varnames <-
-      c(varnames, paste("wk_", varnames[7: 71], sep = ""),
-                  paste("we_", varnames[7: 71], sep = ""),
-        "wtmec2yr_adj", "wtmec4yr_adj")
-    colnames(person.aves) <- varnames
-
-    # Drop variables according to brevity and weekday_weekend settings
-    if (brevity == 1) {
-      if (weekday_weekend) {
-        person.aves <- person.aves[, c(1: 9, 72: 74, 137: 139, 202: 203)]
-      } else {
-        person.aves <- person.aves[, c(1: 9, 202: 203)]
-      }
-    } else if (brevity == 2) {
-      if (waves == 1) {
-        if (weekday_weekend) {
-          person.aves <- person.aves[, c(1: 9, 11: 47, 72: 74, 76: 112,
-                                         137: 139, 141: 177, 202: 203)]
-        } else {
-          person.aves <- person.aves[, c(1: 9, 11: 47, 202: 203)]
-        }
-      } else {
-        if (weekday_weekend) {
-          person.aves <- person.aves[, c(1: 47, 72: 112, 137: 177, 202: 203)]
-        } else {
-          person.aves <- person.aves[, c(1: 47, 202: 203)]
-        }
-      }
-
-    } else if (brevity == 3) {
-      if (waves == 1) {
-        if (weekday_weekend) {
-          person.aves <- person.aves[, c(1: 9, 11: 74, 76: 139, 141: 203)]
-        } else {
-          person.aves <- person.aves[, c(1: 9, 11: 71, 202: 203)]
-        }
-      } else {
-        if (! weekday_weekend) {
-          person.aves <- person.aves[, c(1: 71, 202: 203)]
-        }
-      }
-    }
-
-    # If cpm_nci is TRUE, re-calculate averages for cpm
-    if (cpm_nci) {
-      person.aves[, "cpm"] <- person.aves[, "counts"] /
-        person.aves[, "valid_min"]
-    }
-
   }
 
   # Tell user that data processing is complete
@@ -1116,7 +697,7 @@ process_nhanes <- function(waves = 3,
           }
         }
       }
-      write.csv(x = person.aves, file = personfile, quote = FALSE,
+      write.csv(x = person.vars, file = personfile, quote = FALSE,
                 row.names = FALSE, na = "")
     }
 
@@ -1124,8 +705,8 @@ process_nhanes <- function(waves = 3,
     settings <-
       c("waves", waves,
         "valid_days", valid_days,
-        "valid_week_days", valid_week_days,
-        "valid_weekend_days", valid_weekend_days,
+        "valid_wk_days", valid_wk_days,
+        "valid_we_days", valid_we_days,
         "int_cuts", int_cuts,
         "youth_mod_cuts", youth_mod_cuts,
         "youth_vig_cuts", youth_vig_cuts,
@@ -1170,15 +751,11 @@ process_nhanes <- function(waves = 3,
 
   # Return data frame(s)
   if (return_form == 1) {
-    person.aves <- as.data.frame(person.aves)
-    return(person.aves)
+    ret <- person.vars
   } else if (return_form == 2) {
-    day.vars <- as.data.frame(day.vars)
-    return(day.vars)
+    ret <- as.data.frame(day.vars)
   } else if (return_form == 3) {
-    retlist <- list(person.aves = as.data.frame(person.aves),
-                    day.vars = as.data.frame(day.vars))
-    return(retlist)
+    ret <- list(person.vars = person.vars, day.vars = as.data.frame(day.vars))
   }
-
+  return(ret)
 }
