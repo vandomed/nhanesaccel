@@ -145,7 +145,7 @@
 #' values outside of required intensity range for an MVPA bout.
 #'
 #' @param vig_bout_tol_lower Integer value specifying lower cut-off for count
-#' values outside of required intensity range for a VPA bout.
+#' values outside of required intensity range for a vigorous bout.
 #'
 #' @param active_bout_nci Logical value for whether to use algorithm from the
 #' NCI's SAS programs for classifying active bouts.
@@ -382,7 +382,7 @@ process_nhanes2 <- function(waves = 3,
       days <- start.day: (start.day + n.days)
       days <- ifelse(days > 7, days - 7, days)
 
-      # Assign cut-points for MVPA and vigorous PA according to age
+      # Assign moderate and vigorous cutpoints according to age
       int_cuts <- int_cuts_original
       age.ii <- wave1_ages[ii]
       if (age.ii < 18) {
@@ -547,7 +547,7 @@ process_nhanes2 <- function(waves = 3,
       days <- start.day: (start.day + n.days)
       days <- ifelse(days > 7, days - 7, days)
 
-      # Assign cut-points for MVPA and vigorous PA according to age
+      # Assign moderate and vigorous cutpoints according to age
       int_cuts <- int_cuts_original
       age.ii <- wave2_ages[ii]
       if (age.ii < 18) {
@@ -630,7 +630,7 @@ process_nhanes2 <- function(waves = 3,
       person.vars <- person.vars1
     } else if (return_form == 2) {
       day.vars <- day.vars1
-    } else if (return_form == 3) {
+    } else {
       day.vars <- day.vars1
       person.vars <- person.vars1
     }
@@ -639,13 +639,19 @@ process_nhanes2 <- function(waves = 3,
       person.vars <- person.vars2
     } else if (return_form == 2) {
       day.vars <- day.vars2
-    } else if (return_form == 3) {
+    } else {
       day.vars <- day.vars2
       person.vars <- person.vars2
     }
   } else {
-    day.vars <- rbind(day.vars1, day.vars2)
-    person.vars <- rbind(person.vars1, person.vars2)
+    if (return_form == 1) {
+      person.vars <- rbind(person.vars1, person.vars2)
+    } else if (return_form == 2) {
+      day.vars <- rbind(day.vars1, day.vars2)
+    } else {
+      day.vars <- rbind(day.vars1, day.vars2)
+      person.vars <- rbind(person.vars1, person.vars2)
+    }
   }
 
   # Tell user that data processing is complete
@@ -715,7 +721,7 @@ process_nhanes2 <- function(waves = 3,
         "active_bout_length", active_bout_length,
         "active_bout_tol", active_bout_tol,
         "mvpa_bout_tol_lower", mvpa_bout_tol_lower,
-        "vpa_bout_tol_lower", vpa_bout_tol_lower,
+        "vig_bout_tol_lower", vig_bout_tol_lower,
         "active_bout_nci", active_bout_nci,
         "sed_bout_tol", sed_bout_tol,
         "sed_bout_tol_maximum", sed_bout_tol_maximum,

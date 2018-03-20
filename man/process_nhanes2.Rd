@@ -159,7 +159,7 @@ will tend to be classified as part of the bout.}
 values outside of required intensity range for an MVPA bout.}
 
 \item{vig_bout_tol_lower}{Integer value specifying lower cut-off for count
-values outside of required intensity range for a VPA bout.}
+values outside of required intensity range for a vigorous bout.}
 
 \item{active_bout_nci}{Logical value for whether to use algorithm from the
 NCI's SAS programs for classifying active bouts.}

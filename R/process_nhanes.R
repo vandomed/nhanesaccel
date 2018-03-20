@@ -145,7 +145,7 @@
 #' values outside of required intensity range for an MVPA bout.
 #'
 #' @param vig_bout_tol_lower Integer value specifying lower cut-off for count
-#' values outside of required intensity range for a VPA bout.
+#' values outside of required intensity range for a vigorous bout.
 #'
 #' @param active_bout_nci Logical value for whether to use algorithm from the
 #' NCI's SAS programs for classifying active bouts.
@@ -399,10 +399,10 @@ process_nhanes <- function(waves = 3,
         next
       }
 
-      # Identify bouts of MVPA, VPA, and sedentary time
+      # Identify MVPA, vigorous, and sedentary bouts
       if (brevity %in% c(2, 3)) {
 
-        # Assign cut-points for MVPA and vigorous PA according to age
+        # Assign moderate and vigorous cutpoints according to age
         int_cuts <- int_cuts_original
         age.ii <- wave1_ages[ii]
         if (age.ii < 18) {
@@ -416,7 +416,7 @@ process_nhanes <- function(waves = 3,
                 tol = active_bout_tol, tol_lower = mvpa_bout_tol_lower,
                 nci = active_bout_nci, days_distinct = days_distinct)
 
-        bouted.VPA.ii <-
+        bouted.vig.ii <-
           bouts(counts = counts.ii, weartime = wearflag.ii,
                 bout_length = active_bout_length, thresh_lower = int_cuts[4],
                 tol = active_bout_tol, tol_lower = vig_bout_tol_lower,
@@ -463,7 +463,7 @@ process_nhanes <- function(waves = 3,
         wearflag.jj <- wearflag.ii[start.jj: end.jj]
         if (brevity %in% c(2, 3)) {
           bouted.MVPA.jj <- bouted.MVPA.ii[start.jj: end.jj]
-          bouted.VPA.jj <- bouted.VPA.ii[start.jj: end.jj]
+          bouted.vig.jj <- bouted.vig.ii[start.jj: end.jj]
           bouted.sed10.jj <- bouted.sed10.ii[start.jj: end.jj]
           bouted.sed30.jj <- bouted.sed30.ii[start.jj: end.jj]
           bouted.sed60.jj <- bouted.sed60.ii[start.jj: end.jj]
@@ -528,23 +528,23 @@ process_nhanes <- function(waves = 3,
           day.vars1[k, 38] <- movingaves(x = counts.jj, window = 10, max = TRUE)
           day.vars1[k, 39] <- movingaves(x = counts.jj, window = 30, max = TRUE)
 
-          # Minutes of bouted MVPA and bouted VPA
+          # Minutes in MVPA and vigorous bouts
           sum_bouted.MVPA.jj <- sum(bouted.MVPA.jj)
-          sum_bouted.VPA.jj <- sum(bouted.VPA.jj)
+          sum_bouted.vig.jj <- sum(bouted.vig.jj)
           day.vars1[k, 42] <- sum_bouted.MVPA.jj
-          day.vars1[k, 43] <- sum_bouted.VPA.jj
+          day.vars1[k, 43] <- sum_bouted.vig.jj
 
           # Guideline minutes
-          day.vars1[k, 44] <- sum_bouted.MVPA.jj + sum_bouted.VPA.jj
+          day.vars1[k, 44] <- sum_bouted.MVPA.jj + sum_bouted.vig.jj
 
-          # Number of MVPA and VPA bouts
+          # Number of MVPA and vigorous bouts
           if (sum_bouted.MVPA.jj > 0) {
             day.vars1[k, 40] <- sum(rle2(bouted.MVPA.jj)[, 1] == 1)
           } else {
             day.vars1[k, 40] <- 0
           }
-          if (sum_bouted.VPA.jj > 0) {
-            day.vars1[k, 41] <- sum(rle2(bouted.VPA.jj)[, 1] == 1)
+          if (sum_bouted.vig.jj > 0) {
+            day.vars1[k, 41] <- sum(rle2(bouted.vig.jj)[, 1] == 1)
           } else {
             day.vars1[k, 41] <- 0
           }
@@ -718,10 +718,10 @@ process_nhanes <- function(waves = 3,
         next
       }
 
-      # Identify bouts of MVPA, VPA, and sedentary time
+      # Identify MVPA, vigorous, and sedentary bouts
       if (brevity %in% c(2, 3)) {
 
-        # Assign cut-points for MVPA and vigorous PA according to age
+        # Assign moderate and vigorous cutpoints according to age
         int_cuts <- int_cuts_original
         age.ii <- wave2_ages[ii]
         if (age.ii < 18) {
@@ -735,7 +735,7 @@ process_nhanes <- function(waves = 3,
                 tol = active_bout_tol, tol_lower = mvpa_bout_tol_lower,
                 nci = active_bout_nci, days_distinct = days_distinct)
 
-        bouted.VPA.ii <-
+        bouted.vig.ii <-
           bouts(counts = counts.ii, weartime = wearflag.ii,
                 bout_length = active_bout_length, thresh_lower = int_cuts[4],
                 tol = active_bout_tol, tol_lower = vig_bout_tol_lower,
@@ -783,7 +783,7 @@ process_nhanes <- function(waves = 3,
         if (brevity %in% c(2, 3)) {
           steps.jj <- steps.ii[start.jj: end.jj]
           bouted.MVPA.jj <- bouted.MVPA.ii[start.jj: end.jj]
-          bouted.VPA.jj <- bouted.VPA.ii[start.jj: end.jj]
+          bouted.vig.jj <- bouted.vig.ii[start.jj: end.jj]
           bouted.sed10.jj <- bouted.sed10.ii[start.jj: end.jj]
           bouted.sed30.jj <- bouted.sed30.ii[start.jj: end.jj]
           bouted.sed60.jj <- bouted.sed60.ii[start.jj: end.jj]
@@ -851,23 +851,23 @@ process_nhanes <- function(waves = 3,
           day.vars2[k, 38] <- movingaves(x = counts.jj, window = 10, max = TRUE)
           day.vars2[k, 39] <- movingaves(x = counts.jj, window = 30, max = TRUE)
 
-          # Minutes of bouted MVPA and bouted VPA
+          # Minutes in MVPA and vigorous bouts
           sum_bouted.MVPA.jj <- sum(bouted.MVPA.jj)
-          sum_bouted.VPA.jj <- sum(bouted.VPA.jj)
+          sum_bouted.vig.jj <- sum(bouted.vig.jj)
           day.vars2[k, 42] <- sum_bouted.MVPA.jj
-          day.vars2[k, 43] <- sum_bouted.VPA.jj
+          day.vars2[k, 43] <- sum_bouted.vig.jj
 
           # Guideline minutes
-          day.vars2[k, 44] <- sum_bouted.MVPA.jj + sum_bouted.VPA.jj
+          day.vars2[k, 44] <- sum_bouted.MVPA.jj + sum_bouted.vig.jj
 
-          # Number of MVPA and VPA bouts
+          # Number of MVPA and vigorous bouts
           if (sum_bouted.MVPA.jj > 0) {
             day.vars2[k, 40] <- sum(rle2(bouted.MVPA.jj)[, 1] == 1)
           } else {
             day.vars2[k, 40] <- 0
           }
-          if (sum_bouted.VPA.jj > 0) {
-            day.vars2[k, 41] <- sum(rle2(bouted.VPA.jj)[, 1] == 1)
+          if (sum_bouted.vig.jj > 0) {
+            day.vars2[k, 41] <- sum(rle2(bouted.vig.jj)[, 1] == 1)
           } else {
             day.vars2[k, 41] <- 0
           }
