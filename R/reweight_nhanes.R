@@ -52,8 +52,8 @@
 #' @export
 reweight_nhanes <- function(accel_data, wave, seqn_column, include_column) {
 
-  # # Set variables to NULL to avoid notes from CRAN check
-  # wave1_demo <- wave2_demo <- NULL
+  # Set variables to NULL to avoid notes from CRAN check
+  wave1_demo <- wave2_demo <- NULL
 
   # Load demographics binary file
   if (wave == 1) {
