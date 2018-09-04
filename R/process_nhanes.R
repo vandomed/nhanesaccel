@@ -315,11 +315,11 @@ process_nhanes <- function(waves = 3,
   # Calculate acceptable range for wear time
   weartime.range <- c(weartime_minimum, weartime_maximum)
 
-  # # Set variables to NULL to avoid notes from CRAN check
-  # w1 <- wave1_ages <- wave1_demo <- wave1_paxcal <- wave1_paxday <-
-  #   wave1_paxinten <- wave1_paxstat <- wave1_seqn <- NULL
-  # w2 <- wave2_ages <- wave2_demo <- wave2_paxcal <- wave2_paxday <-
-  #   wave2_paxinten <- wave2_paxstat <- wave2_paxstep <- wave2_seqn <- NULL
+  # Set variables to NULL to avoid notes from CRAN check
+  w1 <- wave1_ages <- wave1_demo <- wave1_paxcal <- wave1_paxday <-
+    wave1_paxinten <- wave1_paxstat <- wave1_seqn <- NULL
+  w2 <- wave2_ages <- wave2_demo <- wave2_paxcal <- wave2_paxday <-
+    wave2_paxinten <- wave2_paxstat <- wave2_paxstep <- wave2_seqn <- NULL
 
   # Process 03-04 data if requested
   if (waves %in% c(1, 3)) {
