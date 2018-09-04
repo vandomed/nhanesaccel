@@ -15,7 +15,7 @@ process_nhanes(waves = 3, directory = getwd(), nci_methods = FALSE,
   active_bout_length = 10, active_bout_tol = 0, mvpa_bout_tol_lower = 0,
   vig_bout_tol_lower = 0, active_bout_nci = FALSE, sed_bout_tol = 0,
   sed_bout_tol_maximum = int_cuts[2] - 1, artifact_thresh = 25000,
-  artifact_action = 1, weekday_weekend = FALSE, return_form = 1,
+  artifact_action = 1, weekday_weekend = FALSE, return_form = "averages",
   write_csv = FALSE)
 }
 \arguments{
@@ -71,8 +71,8 @@ specifically:
 
 \code{artifact_action = 3}
 
-If \code{TRUE}, you can still specify non-default values for \code{brevity}
-and \code{weekday_weekend}.}
+If \code{TRUE}, you can still specify non-default values for \code{brevity},
+\code{weekday_weekend}, and \code{return_form}.}
 
 \item{brevity}{Integer value controlling the number of physical activity
 variables generated. Choices are 1 for basic indicators of physical activity
@@ -181,9 +181,9 @@ neighboring count values, and 4 to take no action.}
 \item{weekday_weekend}{Logical value for whether to calculate averages for
 weekdays and weekend days separately (in addition to all valid days).}
 
-\item{return_form}{Integer value controlling how variables are returned.
-Choices are 1 for per-person basis (i.e. averages for each participant across
-valid days), 2 for per-day basis, and 3 for both.}
+\item{return_form}{Character string controlling how variables are returned.
+Choices are "daily" for per-day summaries, "averages" for averages across
+all valid days, and "both" for a list containing both.}
 
 \item{write_csv}{Logical value for whether to write the results to a .csv
 file in \code{directory}.}
@@ -204,25 +204,42 @@ nhanes1 <- process_nhanes()
 # Process NHANES 2003-2004 with following non-default settings: require >= 4
 # valid days, use 90- rather than 60-minute window for non-wear algorithm,
 # and request averages across all days and for weekdays/weekends separately
-nhanes2 <- process_nhanes(waves = 1, valid_days = 4, nonwear_window = 90,
-                          weekday_weekend = TRUE)
+nhanes2 <- process_nhanes(
+  waves = 1,
+  valid_days = 4,
+  nonwear_window = 90,
+  weekday_weekend = TRUE
+)
 
 # Process data according to methods used in NCI's SAS programs
 youth_mod_cuts <- c(1400, 1515, 1638, 1770, 1910, 2059, 2220, 2393, 2580,
                     2781, 3000, 3239)
 youth_vig_cuts <- c(3758, 3947, 4147, 4360, 4588, 4832, 5094, 5375, 5679,
                     6007, 6363, 6751)
-nhanes3 <- process_nhanes(waves = 3, brevity = 2, valid_days = 4,
-                          youth_mod_cuts = youth_mod_cuts,
-                          youth_vig_cuts = youth_vig_cuts, cpm_nci = TRUE,
-                          days_distinct = TRUE, nonwear_tol = 2,
-                          nonwear_tol_upper = 100, nonwear_nci = TRUE,
-                          weartime_maximum = 1440, active_bout_tol = 2,
-                          active_bout_nci = TRUE, artifact_thresh = 32767,
-                          artifact_action = 3)
+nhanes3 <- process_nhanes(
+  waves = 3,
+  brevity = 2,
+  valid_days = 4,
+  youth_mod_cuts = youth_mod_cuts,
+  youth_vig_cuts = youth_vig_cuts,
+  cpm_nci = TRUE,
+  days_distinct = TRUE,
+  nonwear_tol = 2,
+  nonwear_tol_upper = 100,
+  nonwear_nci = TRUE,
+  weartime_maximum = 1440,
+  active_bout_tol = 2,
+  active_bout_nci = TRUE,
+  artifact_thresh = 32767,
+  artifact_action = 3
+)
 
 # Repeat, but use nci_methods input for convenience
-nhanes4 <- process_nhanes(waves = 3, brevity = 2, nci_methods = TRUE)
+nhanes4 <- process_nhanes(
+  waves = 3,
+  brevity = 2,
+  nci_methods = TRUE
+)
 
 # Results are identical
 all.equal(nhanes3, nhanes4)
@@ -234,17 +251,13 @@ Centers for Disease Control and Prevention (CDC). National Center for Health
 Statistics (NCHS). National Health and Nutrition Examination Survey Data.
 Hyattsville, MD: US Department of Health and Human Services, Centers for
 Disease Control and Prevention, 2003-6
-\url{http://www.cdc.gov/nchs/nhanes/nhanes_questionnaires.htm}. Accessed
-March 13, 2018.
+\url{https://wwwn.cdc.gov/nchs/nhanes/Default.aspx}. Accessed Sep. 4, 2018.
 
 National Cancer Institute. Risk factor monitoring and methods: SAS programs
 for analyzing NHANES 2003-2004 accelerometer data. Available at:
-\url{http://riskfactor.cancer.gov/tools/nhanes_pam}. Accessed March 13, 2018.
+\url{http://riskfactor.cancer.gov/tools/nhanes_pam}. Accessed Sep. 4, 2018.
 
-Van Domelen, D.R. (2014) accelerometry: Functions for processing
-accelerometer data. R package version 3.1.1.
+Van Domelen, D.R. (2018) accelerometry: Functions for processing
+accelerometer data. R package version 3.1.2.
 \url{http://CRAN.R-project.org/package=accelerometry}.
-
-Acknowledgment: This material is based upon work supported by the National
-Science Foundation Graduate Research Fellowship under Grant No. DGE-0940903.
 }
