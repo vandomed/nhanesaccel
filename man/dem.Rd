@@ -8,6 +8,6 @@
 \url{http://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Demographics&CycleBeginYear=2003}
 }
 \description{
-Includes 45 demographics variables for participants in the National Health 
+Includes 45 demographics variables for participants in the National Health
 and Nutrition Examination Survey 2003-2006 dataset.
 }

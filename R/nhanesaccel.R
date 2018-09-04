@@ -48,5 +48,6 @@
 #' @importFrom dvmisc inside
 #' @import svMisc
 #' @import survey
+#' @importFrom utils data write.csv
 #' @name nhanesaccel
 NULL
