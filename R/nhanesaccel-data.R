@@ -43,7 +43,7 @@ NULL
 #'
 #' Includes 5 variables used by \code{\link{process_nhanes}}.
 #'
-#' @name wave1_demo
+#' @name wave2_demo
 #' @source \url{http://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Demographics&CycleBeginYear=2005}
 #' @docType data
 NULL

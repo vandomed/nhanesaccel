@@ -1,4 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^LICENSE$
 process_nhanes_dictionary.csv$
 ^.travis.yml$
