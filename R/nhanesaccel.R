@@ -14,7 +14,7 @@
 #' Package: \tab tab \cr
 #' Type: \tab Package \cr
 #' Version: \tab 3.1.1 \cr
-#' Date: \tab 2018-09-04 \cr
+#' Date: \tab 2018-09-12 \cr
 #' License: \tab GPL-3 \cr
 #' }
 #'
