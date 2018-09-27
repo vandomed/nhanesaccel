@@ -37,6 +37,12 @@ specifically:
 
 \code{int_cuts = c(100, 760, 2020, 5999)}
 
+\code{youth_mod_cuts = c(1400, 1515, 1638, 1770, 1910, 2059, 2220, 2393,
+2580, 2781, 3000, 3239)}
+
+\code{youth_vig_cuts = c(3758, 3947, 4147, 4360, 4588, 4832, 5094, 5375,
+5679, 6007, 6363, 6751)}
+
 \code{cpm_nci = TRUE}
 
 \code{days_distinct = TRUE}
