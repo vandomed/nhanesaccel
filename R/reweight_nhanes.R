@@ -89,8 +89,11 @@ reweight_nhanes <- function(accel_data,
   }
 
   # Add weights column to accel_data
-  accel_data$wtmec2yr_adj <- wtmec2yr_adj
-  #accel_data <- cbind(accel_data, wtmec2yr_adj)
+  if ("wtmec2yr_adj" %in% colnames(accel_data)) {
+    accel_data[, "wtmec2yr_adj"] <- wtmec2yr_adj
+  } else {
+    accel_data <- cbind(accel_data, wtmec2yr_adj)
+  }
 
   # Return accel_data
   return(accel_data)
