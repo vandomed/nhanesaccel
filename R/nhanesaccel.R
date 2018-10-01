@@ -13,8 +13,8 @@
 #' \tabular{ll}{
 #' Package: \tab tab \cr
 #' Type: \tab Package \cr
-#' Version: \tab 3.1.1 \cr
-#' Date: \tab 2018-09-27 \cr
+#' Version: \tab 3.1.2 \cr
+#' Date: \tab 2018-10-01 \cr
 #' License: \tab GPL-3 \cr
 #' }
 #'

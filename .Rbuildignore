@@ -2,4 +2,7 @@
 ^\.Rproj\.user$
 ^LICENSE$
 process_nhanes_dictionary.csv$
+^README.*$
+^Thumbs.db$
 ^.travis.yml$
+^bibliography.bib$
