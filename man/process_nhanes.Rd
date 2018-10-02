@@ -2,7 +2,7 @@
 % Please edit documentation in R/process_nhanes.R
 \name{process_nhanes}
 \alias{process_nhanes}
-\title{Process NHANES 2003-2006 Accelerometer Data (Alternate Implementation)}
+\title{Process NHANES 2003-2006 Accelerometer Data}
 \usage{
 process_nhanes(waves = 3, directory = getwd(), nci_methods = FALSE,
   brevity = 1, hourly_var = "cpm", hourly_wearmin = 0,

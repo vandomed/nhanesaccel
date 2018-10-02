@@ -1,4 +1,4 @@
-#' Process NHANES 2003-2006 Accelerometer Data (Alternate Implementation)
+#' Process NHANES 2003-2006 Accelerometer Data
 #'
 #' Calculates a variety of physical activity variables from the time-series
 #' accelerometer data in NHANES 2003-2006. A data dictionary for the variables

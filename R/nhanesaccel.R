@@ -46,6 +46,8 @@
 #' @docType package
 #' @import accelerometry
 #' @importFrom dvmisc inside
+#' @import haven
+#' @import shiny
 #' @import svMisc
 #' @import survey
 #' @importFrom utils data write.csv
