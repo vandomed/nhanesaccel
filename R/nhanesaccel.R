@@ -14,12 +14,12 @@
 #' Package: \tab tab \cr
 #' Type: \tab Package \cr
 #' Version: \tab 3.1.2 \cr
-#' Date: \tab 2018-10-01 \cr
+#' Date: \tab 2018-10-02 \cr
 #' License: \tab GPL-3 \cr
 #' }
 #'
-#' Includes two functions: \code{\link{process_nhanes}} and
-#' \code{\link{reweight_nhanes}}.
+#' Includes three functions: \code{\link{process_nhanes}},
+#' \code{\link{process_nhanes_app}}, and \code{\link{reweight_nhanes}}.
 #'
 #' @author Dane R. Van Domelen (\email{vandomed@gmail.com}), W. Stephen Pittard,
 #' and Tamara B. Harris
@@ -45,6 +45,7 @@
 #'
 #' @docType package
 #' @import accelerometry
+#' @importFrom dplyr full_join left_join
 #' @importFrom dvmisc inside
 #' @import haven
 #' @import shiny

@@ -1,12 +1,12 @@
 #' Shiny App to Process NHANES 2003-2006 Accelerometer Data
 #'
-#' Simply a Shiny app that provides a GUI for \code{\link{process_nhanes}}.
+#' Simply a Shiny app that provides a user interface for the
+#' \code{\link{process_nhanes}} function.
 #'
 #' @export
 process_nhanes_app <- function() {
 
-  #require(shiny)
-  shinyApp(
+  require(shiny)
 
     # ui part -----------------------------------------------------------------
 

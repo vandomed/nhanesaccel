@@ -203,6 +203,11 @@ accelerometer data in NHANES 2003-2006. A data dictionary for the variables
 created is available here:
 \url{https://vandomed.github.io/process_nhanes_dictionary}.
 }
+\details{
+As an alternative to using this function programmatically, you can use the
+\code{\link{process_nhanes_app}} function to access a GUI. Just run
+\code{process_nhanes_app()} in R.
+}
 \examples{
 # Process NHANES 2003-2006 data using default settings
 nhanes1 <- process_nhanes()

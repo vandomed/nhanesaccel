@@ -5,6 +5,10 @@
 #' created is available here:
 #' \url{https://vandomed.github.io/process_nhanes_dictionary}.
 #'
+#' As an alternative to using this function programmatically, you can use the
+#' \code{\link{process_nhanes_app}} function to access a GUI. Just run
+#' \code{process_nhanes_app()} in R.
+#'
 #' @param waves Integer value for which wave of data to process. Choices are 1
 #' for NHANES 2003-2004, 2 for NHANES 2005-2006 data, and 3 for both.
 #'

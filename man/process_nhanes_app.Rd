@@ -7,6 +7,5 @@
 process_nhanes_app()
 }
 \description{
-Simply a Shiny app that provides a user interface for the
-\code{\link{process_nhanes}} function.
+Simply a Shiny app that provides a GUI for \code{\link{process_nhanes}}.
 }
