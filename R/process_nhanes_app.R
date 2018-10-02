@@ -600,7 +600,7 @@ process_nhanes_app <- function() {
 
                             checkboxGroupInput(
                               inputId = "datasets",
-                              label = span("What other datasets do you want to merge in? This will only work if you have the ", strong("nhanesdata"), "package installed."),
+                              label = "What other datasets do you want to merge in?",
                               choiceNames = list("Demographics", "Occupation", "Body measures", "Blood pressure"),
                               choiceValues = list("demo", "ocq", "bmx", "bpx")
                             )
@@ -908,11 +908,11 @@ process_nhanes_app <- function() {
             if ("demo" %in% input$datasets) {
 
               if (input$waves == 1) {
-                data(demo_c)
+                #data(demo_c)
                 names(demo_c) <- tolower(names(demo_c))
                 accel <<- left_join(x = accel, y = demo_c)
               } else if (input$waves == 2) {
-                data(demo_d)
+                #data(demo_d)
                 names(demo_d) <- tolower(names(demo_d))
                 accel <<- left_join(x = accel, y = demo_d)
               } else if (input$waves == 3) {
@@ -926,11 +926,11 @@ process_nhanes_app <- function() {
             if ("ocq" %in% input$datasets) {
 
               if (input$waves == 1) {
-                data(ocq_c)
+                #data(ocq_c)
                 names(ocq_c) <- tolower(names(ocq_c))
                 accel <<- left_join(x = accel, y = ocq_c)
               } else if (input$waves == 2) {
-                data(ocq_d)
+                #data(ocq_d)
                 names(ocq_d) <- tolower(names(ocq_d))
                 accel <<- left_join(x = accel, y = ocq_d)
               } else if (input$waves == 3) {
@@ -944,11 +944,11 @@ process_nhanes_app <- function() {
             if ("bmx" %in% input$datasets) {
 
               if (input$waves == 1) {
-                data(bmx_c)
+                #data(bmx_c)
                 names(bmx_c) <- tolower(names(bmx_c))
                 accel <<- left_join(x = accel, y = bmx_c)
               } else if (input$waves == 2) {
-                data(bmx_d)
+                #data(bmx_d)
                 names(bmx_d) <- tolower(names(bmx_d))
                 accel <<- left_join(x = accel, y = bmx_d)
               } else if (input$waves == 3) {
@@ -962,11 +962,11 @@ process_nhanes_app <- function() {
             if ("bpx" %in% input$datasets) {
 
               if (input$waves == 1) {
-                data(bpx_c)
+                #data(bpx_c)
                 names(bpx_c) <- tolower(names(bpx_c))
                 accel <<- left_join(x = accel, y = bpx_c)
               } else if (input$waves == 2) {
-                data(bpx_d)
+                #data(bpx_d)
                 names(bpx_d) <- tolower(names(bpx_d))
                 accel <<- left_join(x = accel, y = bpx_d)
               } else if (input$waves == 3) {

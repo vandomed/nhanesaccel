@@ -7,6 +7,7 @@ Author: Dane R. Van Domelen, W. Stephen Pittard, and Tamara B. Harris
 Maintainer: Dane R. Van Domelen <vandomed@gmail.com>
 Description: Functions for processing accelerometer data from the National Health and Nutrition Examination Survey (NHANES), years 2003-2006 (data included). The main function, nhanes.accel.process, generates a variety of physical activity variables, including indicators of physical activity volume, intensity, frequency, and duration. It also generates variables that can be used to study patterns of physical activity, i.e. weekday/weekend differences and hourly trends. Numerous function inputs are available to control data processing algorithms like non-wear time classification and activity bout detection.
 License: GPL (>=3)
+LazyData: true
 Depends: R (>= 3.0.0), survey (>= 3.30-3)
 Imports: accelerometry (>= 3.1.1), dvmisc, haven, shiny, svMisc (>= 0.9-70)
 RoxygenNote: 6.0.1

@@ -74,3 +74,75 @@ NULL
 #' @source \url{https://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Examination&CycleBeginYear=2005}
 #' @docType data
 NULL
+#'
+#' Demographics Data from NHANES 2003-2004
+#'
+#' Includes 44 variables.
+#'
+#' @name demo_c
+#' @source \url{http://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Demographics&CycleBeginYear=2003}
+#' @docType data
+NULL
+#'
+#' Demographics Data from NHANES 2005-2006
+#'
+#' Includes 43 variables.
+#'
+#' @name demo_d
+#' @source \url{http://wwwn.cdc.gov/nchs/nhanes/search/datapage.aspx?Component=Demographics&CycleBeginYear=2005}
+#' @docType data
+NULL
+#'
+#'  Occupational Questionnaire Data from NHANES 2003-2004
+#'
+#' Includes 25 variables.
+#'
+#' @name ocq_c
+#' @source \url{https://wwwn.cdc.gov/Nchs/Nhanes/2003-2004/OCQ_C.htm}
+#' @docType data
+NULL
+#'
+#'  Occupational Questionnaire Data from NHANES 2005-2006
+#'
+#' Includes 15 variables.
+#'
+#' @name ocq_d
+#' @source \url{https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/OCQ_D.htm}
+#' @docType data
+NULL
+#'
+#' Body Measures Data from NHANES 2003-2004
+#'
+#' Includes 33 variables.
+#'
+#' @name bmx_c
+#' @source \url{https://wwwn.cdc.gov/Nchs/Nhanes/2003-2004/BMX_C.htm}
+#' @docType data
+NULL
+#'
+#' Body Measures Data from NHANES 2005-2006
+#'
+#' Includes 27 variables.
+#'
+#' @name bmx_d
+#' @source \url{https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/BMX_D.htm}
+#' @docType data
+NULL
+#'
+#' Blood Pressure Data from NHANES 2003-2004
+#'
+#' Includes 30 variables.
+#'
+#' @name bpx_c
+#' @source \url{https://wwwn.cdc.gov/Nchs/Nhanes/2003-2004/BPX_C.htm}
+#' @docType data
+NULL
+#'
+#' Blood Pressure Data from NHANES 2005-2006
+#'
+#' Includes 28 variables.
+#'
+#' @name bpx_d
+#' @source \url{https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/BPX_D.htm}
+#' @docType data
+NULL
