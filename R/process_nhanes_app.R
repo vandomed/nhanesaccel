@@ -908,15 +908,15 @@ process_nhanes_app <- function() {
               if (input$waves == 1) {
                 #data(demo_c)
                 names(demo_c) <- tolower(names(demo_c))
-                accel <<- left_join(x = accel, y = demo_c)
+                accel <<- dplyr::left_join(x = accel, y = demo_c)
               } else if (input$waves == 2) {
                 #data(demo_d)
                 names(demo_d) <- tolower(names(demo_d))
-                accel <<- left_join(x = accel, y = demo_d)
+                accel <<- dplyr::left_join(x = accel, y = demo_d)
               } else if (input$waves == 3) {
-                demo <- full_join(demo_c, demo_d)
+                demo <- dplyr::full_join(demo_c, demo_d)
                 names(demo) <- tolower(names(demo))
-                accel <- left_join(accel, demo)
+                accel <- dplyr::left_join(accel, demo)
               }
 
             }
@@ -926,15 +926,15 @@ process_nhanes_app <- function() {
               if (input$waves == 1) {
                 #data(ocq_c)
                 names(ocq_c) <- tolower(names(ocq_c))
-                accel <<- left_join(x = accel, y = ocq_c)
+                accel <<- dplyr::left_join(x = accel, y = ocq_c)
               } else if (input$waves == 2) {
                 #data(ocq_d)
                 names(ocq_d) <- tolower(names(ocq_d))
-                accel <<- left_join(x = accel, y = ocq_d)
+                accel <<- dplyr::left_join(x = accel, y = ocq_d)
               } else if (input$waves == 3) {
-                ocq <- full_join(ocq_c, ocq_d)
+                ocq <- dplyr::full_join(ocq_c, ocq_d)
                 names(ocq) <- tolower(names(ocq))
-                accel <<- left_join(accel, ocq)
+                accel <<- dplyr::left_join(accel, ocq)
               }
 
             }
@@ -944,15 +944,15 @@ process_nhanes_app <- function() {
               if (input$waves == 1) {
                 #data(bmx_c)
                 names(bmx_c) <- tolower(names(bmx_c))
-                accel <<- left_join(x = accel, y = bmx_c)
+                accel <<- dplyr::left_join(x = accel, y = bmx_c)
               } else if (input$waves == 2) {
                 #data(bmx_d)
                 names(bmx_d) <- tolower(names(bmx_d))
-                accel <<- left_join(x = accel, y = bmx_d)
+                accel <<- dplyr::left_join(x = accel, y = bmx_d)
               } else if (input$waves == 3) {
-                bmx <- full_join(bmx_c, bmx_d)
+                bmx <- dplyr::full_join(bmx_c, bmx_d)
                 names(bmx) <- tolower(names(bmx))
-                accel <<- left_join(accel, bmx)
+                accel <<- dplyr::left_join(accel, bmx)
               }
 
             }
@@ -962,15 +962,15 @@ process_nhanes_app <- function() {
               if (input$waves == 1) {
                 #data(bpx_c)
                 names(bpx_c) <- tolower(names(bpx_c))
-                accel <<- left_join(x = accel, y = bpx_c)
+                accel <<- dplyr::left_join(x = accel, y = bpx_c)
               } else if (input$waves == 2) {
                 #data(bpx_d)
                 names(bpx_d) <- tolower(names(bpx_d))
-                accel <<- left_join(x = accel, y = bpx_d)
+                accel <<- dplyr::left_join(x = accel, y = bpx_d)
               } else if (input$waves == 3) {
-                bpx <- full_join(bpx_c, bpx_d)
+                bpx <- dplyr::full_join(bpx_c, bpx_d)
                 names(bpx) <- tolower(names(bpx))
-                accel <<- left_join(accel, bpx)
+                accel <<- dplyr::left_join(accel, bpx)
               }
 
             }

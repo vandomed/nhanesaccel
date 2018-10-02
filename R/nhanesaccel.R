@@ -45,7 +45,6 @@
 #'
 #' @docType package
 #' @import accelerometry
-#' @importFrom dplyr full_join left_join
 #' @importFrom dvmisc inside
 #' @import haven
 #' @import shiny

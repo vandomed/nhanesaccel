@@ -9,7 +9,7 @@ Description: Functions for processing accelerometer data from the National Healt
 License: GPL (>=3)
 LazyData: true
 Depends: R (>= 3.0.0), survey (>= 3.30-3)
-Imports: accelerometry (>= 3.1.1), dvmisc, haven, shiny, svMisc (>= 0.9-70)
+Imports: accelerometry (>= 3.1.1), dplyr, dvmisc, haven, shiny, svMisc (>= 0.9-70)
 RoxygenNote: 6.0.1
 Suggests: knitr,
     rmarkdown,
