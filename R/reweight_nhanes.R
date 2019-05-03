@@ -10,13 +10,10 @@
 #' It can have any number of columns but one must have respondent sequence
 #' numbers (NHANES ID variable "seqn") and another must indicate whether each
 #' participant has valid data (1 if valid, 0 if not valid).
-#'
 #' @param wave Integer value specifying NHANES wave. Choices are 1 for NHANES
 #' 2003-2004 and 2 for NHANES 2005-2006.
-#'
 #' @param seqn_column Column number (or name) for respondent sequence numbers
 #' (NHANES ID variable "SEQN").
-#'
 #' @param include_column Column number (or name) for 0/1 indicator for which
 #' participants to include.
 #'

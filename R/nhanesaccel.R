@@ -14,26 +14,28 @@
 #' Package: \tab tab \cr
 #' Type: \tab Package \cr
 #' Version: \tab 3.1.2 \cr
-#' Date: \tab 2018-10-02 \cr
+#' Date: \tab 2019-05-03 \cr
 #' License: \tab GPL-3 \cr
 #' }
 #'
 #' Includes three functions: \code{\link{process_nhanes}},
 #' \code{\link{process_nhanes_app}}, and \code{\link{reweight_nhanes}}.
 #'
+#'
 #' @author Dane R. Van Domelen (\email{vandomed@gmail.com}), W. Stephen Pittard,
 #' and Tamara B. Harris
+#'
 #'
 #' @references
 #' Centers for Disease Control and Prevention (CDC). National Center for Health
 #' Statistics (NCHS). National Health and Nutrition Examination Survey Data.
 #' Hyattsville, MD: US Department of Health and Human Services, Centers for
-#' Disease Control and Prevention, 2003-6
-#' \url{https://wwwn.cdc.gov/nchs/nhanes/Default.aspx}. Accessed Sep. 4, 2018.
+#' Disease Control and Prevention, 2003-6.
+#' \url{https://wwwn.cdc.gov/nchs/nhanes/Default.aspx}. Accessed Jan. 7, 2019.
 #'
 #' National Cancer Institute. Risk factor monitoring and methods: SAS programs
 #' for analyzing NHANES 2003-2004 accelerometer data. Available at:
-#' \url{http://riskfactor.cancer.gov/tools/nhanes_pam}. Accessed Sep. 4, 2018.
+#' \url{http://riskfactor.cancer.gov/tools/nhanes_pam}. Accessed Jan. 7, 2019.
 #'
 #' Van Domelen, D.R. (2018) accelerometry: Functions for processing
 #' accelerometer data. R package version 3.1.2.

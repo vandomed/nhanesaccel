@@ -9,12 +9,11 @@
 #' \code{\link{process_nhanes_app}} function to access a GUI. Just run
 #' \code{process_nhanes_app()} in R.
 #'
+#'
 #' @param waves Integer value for which wave of data to process. Choices are 1
 #' for NHANES 2003-2004, 2 for NHANES 2005-2006 data, and 3 for both.
-#'
 #' @param directory Character string specifying directory in which to write .csv
 #' file, if \code{write_csv = TRUE}.
-#'
 #' @param nci_methods Logical value for whether to set all arguments so as to
 #' replicate the data processing methods used in the NCI's SAS programs. More
 #' specifically:
@@ -75,112 +74,83 @@
 #' volume, 2 for addditional indicators of activity intensities, activity bouts,
 #' sedentary behavior, and peak activity, and 3 for additional hourly count
 #' averages.
-#'
 #' @param hourly_var Character string specifying what hourly activity variable
 #' to record, if \code{brevity = 3}. Choices are "counts", "cpm", "sed_min",
 #' "sed_bouted_10min", and "sed_breaks".
-#'
 #' @param hourly_wearmin Integer value specifying minimum number of wear time
 #' minutes needed during a given hour to record a value for the hourly activity
 #' variable.
-#'
 #' @param hourly_normalize Logical value for whether to normalize hourly
 #' activity by number of wear time minutes.
-#'
 #' @param valid_days Integer value specifying minimum number of valid days to
 #' be considered valid for analysis.
-#'
 #' @param valid_wk_days Integer value specifying minimum number of valid
 #' weekdays to be considered valid for analysis.
-#'
 #' @param valid_we_days Integer value specifying minimum number of valid weekend
 #' days to be considered valid for analysis.
-#'
 #' @param int_cuts Numeric vector with four cutpoints from which five intensity
 #' ranges are derived. For example, \code{int_cuts = c(100, 760, 2020, 5999)}
 #' creates: 0-99 = intensity 1; 100-759 = intensity level 2; 760-2019 =
 #' intensity 3; 2020-5998 = intensity 4; >= 5999 = intensity 5. Intensities 1-5
 #' are typically viewed as sedentary, light, lifestyle, moderate, and vigorous.
-#'
 #' @param youth_mod_cuts Integer vector of 12 count cutpoints for classifying
 #' moderate physical activity in youth, for ages 6, 7, ..., 17. To replicate the
 #' NCI's SAS programs, set \code{youth_mod_cuts = c(1400, 1515, 1638, 1770, 1910, 2059, 2220, 2393, 2580, 2781, 3000, 3239)}.
-#'
 #' @param youth_vig_cuts Integer vector of 12 count cutpoints for classifying
 #' vigorous physical activity in youth, for ages 6, 7, ..., 17. To replicate the
 #' NCI's SAS programs, set \code{youth_vig_cuts = c(3758, 3947, 4147, 4360, 4588, 4832, 5094, 5375, 5679, 6007, 6363, 6751)}.
-#'
 #' @param cpm_nci Logical value for whether to calculate average counts per
 #' minute by dividing average daily counts by average daily wear time, as
 #' opposed to taking the average of each day's counts per minute value. Strongly
 #' recommend leave as \code{FALSE} unless you wish to replicate the NCI's SAS
 #' programs.
-
 #' @param days_distinct Logical value for whether to treat each day of data as
 #' distinct, as opposed to analyzing the entire monitoring period as one
 #' continuous segment.
-#'
 #' @param nonwear_window Integer value specifying minimum length of a non-wear
 #' period.
-#'
 #' @param nonwear_tol Integer value specifying tolerance for non-wear algorithm,
 #' i.e. number of minutes with non-zero counts allowed during a non-wear
 #' interval.
-#'
 #' @param nonwear_tol_upper Integer value specifying maximum count value for a
 #' minute with non-zero counts during a non-wear interval.
-#'
 #' @param nonwear_nci Logical value for whether to use non-wear algorithm from
 #' NCI's SAS programs.
-#'
 #' @param weartime_minimum Integer value specifying minimum number of wear time
 #' minutes for a day to be considered valid.
-#'
 #' @param weartime_maximum Integer value specifying maximum number of wear time
 #' minutes for a day to be considered valid. The default is 1440, but you may
 #' want to use a lower value (e.g. 1200) if participants were instructed to
 #' remove devices for sleeping, but often did not.
-#'
 #' @param active_bout_length Integer value specifying minimum length of an
 #' active bout.
-#'
 #' @param active_bout_tol Integer value specifying number of minutes with counts
 #' outside the required range to allow during an active bout. If non-zero and
 #' \code{active_bout_nci = FALSE}, specifying non-zero values for
 #' \code{mvpa_bout_tol_lower} and \code{vig_bout_tol_lower} is highly
 #' recommended. Otherwise minutes immediately before and after an active bout
 #' will tend to be classified as part of the bout.
-#'
 #' @param mvpa_bout_tol_lower Integer value specifying lower cut-off for count
 #' values outside of required intensity range for an MVPA bout.
-#'
 #' @param vig_bout_tol_lower Integer value specifying lower cut-off for count
 #' values outside of required intensity range for a vigorous bout.
-#'
 #' @param active_bout_nci Logical value for whether to use algorithm from the
 #' NCI's SAS programs for classifying active bouts.
-#'
 #' @param sed_bout_tol Integer value specifying number of minutes with counts
 #' outside sedentary range to allow during a sedentary bout.
-#'
 #' @param sed_bout_tol_maximum Integer value specifying upper cut-off for count
 #' values outside sedentary range during a sedentary bout.
-#'
 #' @param artifact_thresh Integer value specifying the smallest count value that
 #' should be considered an artifact.
-#'
 #' @param artifact_action Integer value controlling method of correcting
 #' artifacts. Choices are 1 to exclude days with one or more artifacts, 2 to
 #' lump artifacts into non-wear time, 3 to replace artifacts with the average of
 #' neighboring count values, and 4 to take no action.
-#'
 #' @param weekday_weekend Logical value for whether to calculate averages for
 #' weekdays and weekend days separately (in addition to all valid days).
-#'
 #' @param return_form Character string controlling how variables are returned.
 #' Choices are "daily" for per-day summaries, "averages" for averages across
 #' all valid days, and "both" for a list containing both.
-#'
 #' @param write_csv Logical value for whether to write the results to a .csv
 #' file in \code{directory}.
 #'
@@ -193,12 +163,12 @@
 #' Centers for Disease Control and Prevention (CDC). National Center for Health
 #' Statistics (NCHS). National Health and Nutrition Examination Survey Data.
 #' Hyattsville, MD: US Department of Health and Human Services, Centers for
-#' Disease Control and Prevention, 2003-6
-#' \url{https://wwwn.cdc.gov/nchs/nhanes/Default.aspx}. Accessed Sep. 4, 2018.
+#' Disease Control and Prevention, 2003-6.
+#' \url{https://wwwn.cdc.gov/nchs/nhanes/Default.aspx}. Accessed Jan. 7, 2019.
 #'
 #' National Cancer Institute. Risk factor monitoring and methods: SAS programs
 #' for analyzing NHANES 2003-2004 accelerometer data. Available at:
-#' \url{http://riskfactor.cancer.gov/tools/nhanes_pam}. Accessed Sep. 4, 2018.
+#' \url{http://riskfactor.cancer.gov/tools/nhanes_pam}. Accessed Jan. 7, 2019.
 #'
 #' Van Domelen, D.R. (2018) accelerometry: Functions for processing
 #' accelerometer data. R package version 3.1.2.
@@ -653,20 +623,19 @@ process_nhanes <- function(waves = 3,
     if (return_form == "averages") {
 
       person.vars <- person.vars1
-      names(person.vars)[1] <- "seqn"
+      colnames(person.vars)[1] <- "seqn"
 
     } else if (return_form == "daily") {
 
       day.vars <- day.vars1
-      names(day.vars)[1] <- "seqn"
+      colnames(day.vars)[1] <- "seqn"
 
     } else {
 
       day.vars <- day.vars1
       person.vars <- person.vars1
-
-      names(day.vars)[1] <- "seqn"
-      names(person.vars)[1] <- "seqn"
+      colnames(day.vars)[1] <- "seqn"
+      colnames(person.vars)[1] <- "seqn"
 
     }
 
@@ -675,20 +644,19 @@ process_nhanes <- function(waves = 3,
     if (return_form == "averages") {
 
       person.vars <- person.vars2
-      names(person.vars)[1] <- "seqn"
+      colnames(person.vars)[1] <- "seqn"
 
     } else if (return_form == "daily") {
 
       day.vars <- day.vars2
-      names(day.vars)[1] <- "seqn"
+      colnames(day.vars)[1] <- "seqn"
 
     } else {
 
       day.vars <- day.vars2
       person.vars <- person.vars2
-
-      names(day.vars)[1] <- "seqn"
-      names(person.vars)[1] <- "seqn"
+      colnames(day.vars)[1] <- "seqn"
+      colnames(person.vars)[1] <- "seqn"
 
     }
 
@@ -697,20 +665,19 @@ process_nhanes <- function(waves = 3,
     if (return_form == "averages") {
 
       person.vars <- rbind(person.vars1, person.vars2)
-      names(person.vars)[1] <- "seqn"
+      colnames(person.vars)[1] <- "seqn"
 
     } else if (return_form == "daily") {
 
       day.vars <- rbind(day.vars1, day.vars2)
-      names(day.vars)[1] <- "seqn"
+      colnames(day.vars)[1] <- "seqn"
 
     } else {
 
       day.vars <- rbind(day.vars1, day.vars2)
       person.vars <- rbind(person.vars1, person.vars2)
-
-      names(day.vars)[1] <- "seqn"
-      names(person.vars)[1] <- "seqn"
+      colnames(day.vars)[1] <- "seqn"
+      colnames(person.vars)[1] <- "seqn"
 
     }
   }

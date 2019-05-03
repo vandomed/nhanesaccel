@@ -4,5 +4,6 @@
 process_nhanes_dictionary.csv$
 ^README.*$
 ^Thumbs.db$
+^misc$
 ^.travis.yml$
 ^bibliography.bib$

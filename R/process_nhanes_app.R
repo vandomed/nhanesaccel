@@ -916,7 +916,7 @@ process_nhanes_app <- function() {
               } else if (input$waves == 3) {
                 demo <- dplyr::full_join(demo_c, demo_d)
                 names(demo) <- tolower(names(demo))
-                accel <- dplyr::left_join(accel, demo)
+                accel <<- dplyr::left_join(accel, demo)
               }
 
             }
