@@ -4,21 +4,41 @@
 \alias{process_nhanes}
 \title{Process NHANES 2003-2006 Accelerometer Data}
 \usage{
-process_nhanes(waves = 3, directory = getwd(), nci_methods = FALSE,
-  brevity = 1, hourly_var = "cpm", hourly_wearmin = 0,
-  hourly_normalize = FALSE, valid_days = 1, valid_wk_days = 0,
-  valid_we_days = 0, int_cuts = c(100, 760, 2020, 5999),
+process_nhanes(
+  waves = 3,
+  directory = getwd(),
+  nci_methods = FALSE,
+  brevity = 1,
+  hourly_var = "cpm",
+  hourly_wearmin = 0,
+  hourly_normalize = FALSE,
+  valid_days = 1,
+  valid_wk_days = 0,
+  valid_we_days = 0,
+  int_cuts = c(100, 760, 2020, 5999),
   youth_mod_cuts = rep(int_cuts[3], 12),
-  youth_vig_cuts = rep(int_cuts[4], 12), cpm_nci = FALSE,
-  days_distinct = FALSE, nonwear_window = 60, nonwear_tol = 0,
-  nonwear_tol_upper = 99, nonwear_nci = FALSE,
-  weartime_minimum = 600, weartime_maximum = 1440,
-  active_bout_length = 10, active_bout_tol = 0,
-  mvpa_bout_tol_lower = 0, vig_bout_tol_lower = 0,
-  active_bout_nci = FALSE, sed_bout_tol = 0,
-  sed_bout_tol_maximum = int_cuts[2] - 1, artifact_thresh = 25000,
-  artifact_action = 1, weekday_weekend = FALSE,
-  return_form = "averages", write_csv = FALSE)
+  youth_vig_cuts = rep(int_cuts[4], 12),
+  cpm_nci = FALSE,
+  days_distinct = FALSE,
+  nonwear_window = 60,
+  nonwear_tol = 0,
+  nonwear_tol_upper = 99,
+  nonwear_nci = FALSE,
+  weartime_minimum = 600,
+  weartime_maximum = 1440,
+  active_bout_length = 10,
+  active_bout_tol = 0,
+  mvpa_bout_tol_lower = 0,
+  vig_bout_tol_lower = 0,
+  active_bout_nci = FALSE,
+  sed_bout_tol = 0,
+  sed_bout_tol_maximum = int_cuts[2] - 1,
+  artifact_thresh = 25000,
+  artifact_action = 1,
+  weekday_weekend = FALSE,
+  return_form = "averages",
+  write_csv = FALSE
+)
 }
 \arguments{
 \item{waves}{Integer value for which wave of data to process. Choices are 1

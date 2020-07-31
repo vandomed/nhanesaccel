@@ -4,8 +4,12 @@
 \alias{reweight_nhanes}
 \title{Calculate Adjusted Mobile Exam Center (MEC) Weights}
 \usage{
-reweight_nhanes(accel_data, wave, seqn_column = "seqn",
-  include_column = "include")
+reweight_nhanes(
+  accel_data,
+  wave,
+  seqn_column = "seqn",
+  include_column = "include"
+)
 }
 \arguments{
 \item{accel_data}{Numeric matrix or data frame with one row per participant.

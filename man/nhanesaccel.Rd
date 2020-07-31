@@ -3,7 +3,6 @@
 \docType{package}
 \name{nhanesaccel}
 \alias{nhanesaccel}
-\alias{nhanesaccel-package}
 \title{Process Accelerometer Data from NHANES 2003-2006}
 \description{
 Functions for processing accelerometer data from the National Health and
@@ -18,10 +17,10 @@ detection.
 }
 \details{
 \tabular{ll}{
-Package: \tab tab \cr
+Package: \tab nhanesaccel \cr
 Type: \tab Package \cr
-Version: \tab 3.1.2 \cr
-Date: \tab 2019-05-03 \cr
+Version: \tab 1.0.0 \cr
+Date: \tab 2020-07-30 \cr
 License: \tab GPL-3 \cr
 }
 

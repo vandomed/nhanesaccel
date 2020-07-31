@@ -11,10 +11,10 @@
 #' detection.
 #'
 #' \tabular{ll}{
-#' Package: \tab tab \cr
+#' Package: \tab nhanesaccel \cr
 #' Type: \tab Package \cr
-#' Version: \tab 3.1.2 \cr
-#' Date: \tab 2019-05-03 \cr
+#' Version: \tab 1.0.0 \cr
+#' Date: \tab 2020-07-30 \cr
 #' License: \tab GPL-3 \cr
 #' }
 #'
